@@ -1,9 +1,15 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
-    groq_api_key: str = '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'
-    gpt_model: str = 'openai/gpt-oss-120b'
-    class ConfigDict:
-        env_file = '.env'
+    groq_api_key: str
+    gpt_model: str = "openai/gpt-oss-120b"
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
 
 settings = Settings()
