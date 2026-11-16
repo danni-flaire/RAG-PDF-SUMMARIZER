@@ -30,4 +30,4 @@ async def upload_document(file: UploadFile = File(...)):
     return {
         "filename": file.filename,
         "extracted_text": text
-    }
+    } 
