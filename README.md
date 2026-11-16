@@ -1,255 +1,152 @@
-RAG PDF Summarizer
+# RAG PDF Summarizer
 
-An AI-powered PDF summarization and question-answering application built with Retrieval-Augmented Generation (RAG).
+**Upload a PDF. Get a summary. Ask it questions.**
 
-RAG PDF Summarizer allows users to upload PDF documents, extract their contents, generate intelligent summaries, and ask questions about information contained within their documents.
+RAG PDF Summarizer is a full-stack app that lets you chat with your documents. Instead of pushing an entire PDF into an LLM, it extracts and chunks the text, embeds it into a vector store, and retrieves only the passages relevant to each question, so answers stay grounded in your document.
 
-Instead of sending entire documents directly to an LLM, the application uses document processing, embeddings, vector search, and retrieval pipelines to provide context-aware responses.
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Vue](https://img.shields.io/badge/Vue_3-4FC08D?logo=vuedotjs&logoColor=white)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-vector_store-orange)
+![Groq](https://img.shields.io/badge/Groq-LLM_inference-black)
 
-Tech Stack
+---
 
-Technology	Purpose
-Python	Backend and AI engineering
-FastAPI	REST API
-Vue 3	Frontend
-JavaScript	Frontend logic
-Groq	LLM inference
-ChromaDB	Vector storage and retrieval
-pypdf	PDF text extraction
-Pydantic	Data validation
-Uvicorn	ASGI server
-Vite	Frontend tooling
+## Features
 
-Features
+- **PDF ingestion**: drag-and-drop upload, file validation, text extraction with `pypdf`, and metadata tracking
+- **Smart chunking**: overlapping text chunks sized for retrieval quality
+- **Semantic search**: embeddings stored in ChromaDB and queried by similarity
+- **Grounded Q&A**: retrieved context is assembled into a prompt and answered by a Groq-hosted LLM
+- **Summaries**: condensed overviews of long documents without reading every page
+- **Chat interface**: conversation history, document management, and a responsive Vue 3 UI
 
-Document Processing
+## Tech Stack
 
-* PDF document uploads.
-* PDF text extraction.
-* File validation.
-* Document metadata management.
-* Intelligent text chunking.
-* Document processing pipeline.
+| Layer | Technology |
+|---|---|
+| API | FastAPI, Uvicorn, Pydantic |
+| LLM inference | Groq |
+| Vector store | ChromaDB |
+| PDF parsing | pypdf |
+| Frontend | Vue 3, JavaScript, Vite |
 
-AI Engineering
+## How It Works
 
-* Retrieval-Augmented Generation (RAG).
-* Text embedding generation.
-* Semantic similarity search.
-* Vector database integration.
-* Context-aware LLM responses.
-* AI-powered document summarization.
-* Document-based question answering.
-* Context retrieval and prompt construction.
+```
+Vue 3 frontend ──► FastAPI
+                     │
+        ┌────────────┴────────────┐
+        ▼                         ▼
+ Document service            LLM service
+ extract → chunk → embed         ▲
+        │                        │
+        ▼                        │
+    ChromaDB ──► retrieval ──► context building ──► Groq ──► response
+```
 
-User Interface
+**Ingestion**
 
-* AI chat interface.
-* PDF upload functionality.
-* Drag-and-drop document uploads.
-* Conversation history.
-* Document management.
-* Responsive interface.
-* Streaming AI responses.
+1. The user uploads a PDF.
+2. The backend validates the file and extracts its text with `pypdf`.
+3. The text is split into overlapping chunks.
+4. Each chunk is embedded and stored in ChromaDB with its metadata.
 
-Architecture
+**Question answering**
 
-             VUE 3 FRONTEND
-                    |
-                    v
-              FASTAPI API
-                    |
-          +---------+---------+
-          |                   |
-          v                   v
-    DOCUMENT SERVICE      LLM SERVICE
-          |                   |
-          v                   |
-     PDF EXTRACTION            |
-          |                   |
-          v                   |
-      TEXT CHUNKING             |
-          |                   |
-          v                   |
-     EMBEDDING MODEL            |
-          |                   |
-          v                   |
-       CHROMADB                 |
-          |                   |
-          v                   |
-    SEMANTIC RETRIEVAL          |
-          |                   |
-          +--------+----------+
-                   |
-                   v
-             CONTEXT BUILDING
-                   |
-                   v
-               GROQ LLM
-                   |
-                   v
-             AI RESPONSE
-                   |
-                   v
-              VUE FRONTEND
+1. The question is embedded.
+2. ChromaDB returns the most semantically similar chunks.
+3. The chunks are assembled into a prompt as context.
+4. Groq generates an answer, which is returned to the UI.
 
-How It Works
+**Summarization** follows the same pipeline: extracted content goes to the LLM to produce a concise summary.
 
-1. Document Ingestion
+## Getting Started
 
-Users upload PDF documents through the frontend.
+### Prerequisites
 
-The backend:
+- Python 3.11+
+- Node.js and npm
+- A [Groq API key](https://console.groq.com)
 
-1. Receives the uploaded document.
-2. Validates the file.
-3. Extracts text using pypdf.
-4. Splits the extracted text into smaller chunks.
-5. Generates embeddings.
-6. Stores embeddings and metadata in ChromaDB.
+### 1. Clone
 
-2. Retrieval-Augmented Generation
-
-When a user asks a question:
-
-1. The question is converted into an embedding.
-2. ChromaDB searches for relevant document chunks.
-3. The most relevant information is retrieved.
-4. Retrieved context is supplied to the LLM.
-5. Groq generates a context-aware response.
-6. The response is returned to the frontend.
-
-3. PDF Summarization
-
-The application uses extracted document content and LLM inference to generate summaries, helping users understand lengthy documents without manually reading every page.
-
-Project Structure
-
-RAG-PDF-SUMMARIZER/
-│
-├── app/
-│   ├── api/
-│   │   └── routes.py
-│   │
-│   ├── core/
-│   │   └── config.py
-│   │
-│   ├── models/
-│   │   └── schemas.py
-│   │
-│   ├── services/
-│   │   ├── document_service.py
-│   │   ├── embedding_service.py
-│   │   ├── llm_service.py
-│   │   └── rag_service.py
-│   │
-│   └── main.py
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   ├── package.json
-│   └── vite.config.js
-│
-├── data/
-├── tests/
-│
-├── .env.example
-├── .gitignore
-├── requirements.txt
-└── README.md
-
-Installation
-
-Prerequisites
-
-* Python 3.11+
-* Node.js
-* npm
-* Groq API key
-
-1. Clone the repository
-
+```bash
 git clone https://github.com/danni-flaire/RAG-PDF-SUMMARIZER.git
 cd RAG-PDF-SUMMARIZER
+```
 
-2. Set up Python
+### 2. Backend
 
+```bash
 python -m venv .venv
-source .venv/bin/activate
-
-3. Install dependencies
-
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+```
 
-4. Configure environment variables
+Create a `.env` file in the project root (see `.env.example` for all options):
 
-Create a .env file in the project root.
-
+```env
 GROQ_API_KEY=your_groq_api_key
+```
 
-Add other configuration variables required by the application.
+Start the server:
 
-5. Start the backend
-
+```bash
 python -m uvicorn app.main:app --reload
+```
 
-Backend:
+- API: http://127.0.0.1:8000
+- Interactive docs: http://127.0.0.1:8000/docs
 
-http://127.0.0.1:8000
+### 3. Frontend
 
-API documentation:
-
-http://127.0.0.1:8000/docs
-
-6. Start the frontend
-
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
-Frontend:
+Open http://localhost:5173.
 
-http://localhost:5173
+## Project Structure
 
-Engineering Concepts
+```
+RAG-PDF-SUMMARIZER/
+├── app/
+│   ├── api/routes.py            # HTTP endpoints
+│   ├── core/config.py           # Settings and environment config
+│   ├── models/schemas.py        # Pydantic request/response models
+│   ├── services/
+│   │   ├── document_service.py  # Upload, extraction, chunking
+│   │   ├── embedding_service.py # Embedding generation
+│   │   ├── llm_service.py       # Groq client
+│   │   └── rag_service.py       # Retrieval and prompt construction
+│   └── main.py                  # FastAPI entry point
+├── frontend/                    # Vue 3 + Vite app
+├── data/                        # Local storage
+├── tests/
+├── .env.example
+├── requirements.txt
+└── README.md
+```
 
-This project demonstrates practical experience with:
+## Roadmap
 
-* Retrieval-Augmented Generation.
-* Large Language Model integration.
-* Embedding models.
-* Vector databases.
-* Semantic search.
-* Document ingestion.
-* Text chunking and overlap.
-* Prompt engineering.
-* Context window management.
-* Async Python.
-* REST API development.
-* Frontend/backend integration.
-* AI application architecture.
+- [ ] OCR for scanned PDFs
+- [ ] DOCX and TXT support
+- [ ] Hybrid search and reranking
+- [ ] Multi-document conversations
+- [ ] User authentication
+- [ ] Background document processing
+- [ ] Streaming responses via Server-Sent Events
+- [ ] Docker setup
+- [ ] RAG evaluation and observability
 
-Future Improvements
+## What This Project Demonstrates
 
-* OCR for scanned PDFs.
-* DOCX and TXT support.
-* Hybrid search.
-* Reranking models.
-* Advanced retrieval strategies.
-* Multi-document conversations.
-* User authentication.
-* Background document processing.
-* Streaming responses using Server-Sent Events.
-* Docker containerization.
-* RAG evaluation and observability.
+Retrieval-augmented generation, embeddings and vector search, document ingestion and chunking, prompt and context-window management, LLM integration, REST API design with FastAPI, and frontend/backend integration.
 
-Author
+## Author
 
-Danni Flaire
-
-GitHub: @danni-flaire
-
-⸻
-
-Built with Python, FastAPI, Vue 3, and modern AI engineering techniques.
+**Danni Flaire** · [@danni-flaire](https://github.com/danni-flaire)
