@@ -4,7 +4,7 @@
 
 RAG PDF Summarizer is a full-stack app that lets you chat with your documents. Instead of pushing an entire PDF into an LLM, it extracts and chunks the text, embeds it into a vector store, and retrieves only the passages relevant to each question, so answers stay grounded in your document.
 
-![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![Vue](https://img.shields.io/badge/Vue_3-4FC08D?logo=vuedotjs&logoColor=white)
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-vector_store-orange)
